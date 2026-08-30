@@ -28,6 +28,44 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <!-- Disclaimer Popup (shown once per browser session) -->
+    <div id="disclaimerOverlay" class="disclaimer-overlay">
+        <div class="disclaimer-box" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
+            <h2 id="disclaimerTitle">Disclaimer</h2>
+            <div class="disclaimer-content">
+                <p>
+                    <strong>DISCLAIMER!</strong> Book only through our Official Website,
+                    Direct Hotel Booking, or Agoda. Hotel Sagar Bela does not authorize any
+                    other person, travel agent, website, or platform to accept bookings or
+                    collect payments on its behalf. The hotel shall not be responsible for
+                    any loss, fraud, or booking disputes arising from reservations made
+                    through unauthorized sources.
+                </p>
+                <p>
+                    By continuing to use this website, you acknowledge and accept this disclaimer.
+                </p>
+            </div>
+            <button id="disclaimerAccept" class="disclaimer-accept">I Understand &amp; Accept</button>
+        </div>
+    </div>
+    <script>
+        (function() {
+            var overlay = document.getElementById('disclaimerOverlay');
+            if (!overlay) return;
+            // Show only once per browser session
+            if (!sessionStorage.getItem('disclaimerAccepted')) {
+                overlay.style.display = 'flex';
+                document.body.classList.add('disclaimer-open');
+            }
+            function dismiss() {
+                overlay.style.display = 'none';
+                document.body.classList.remove('disclaimer-open');
+                sessionStorage.setItem('disclaimerAccepted', '1');
+            }
+            document.getElementById('disclaimerAccept').addEventListener('click', dismiss);
+        })();
+    </script>
+
     <nav class="navbar">
         <div class="nav-brand">
             <a href="{{ url_for('home') }}">🌊 Hotel Sagar Bela<span style="display:block; font-size:0.55em; font-weight:400; color:#90e0ef; letter-spacing:0.5px;">(A Unit Of Affinity Homes)</span></a>
@@ -133,11 +171,22 @@
     </div>
 
     <script>
-        // Show chat bubble after 3 seconds for new visitors
-        setTimeout(function() {
-            var bubble = document.getElementById('whatsappBubble');
-            if (bubble) bubble.style.display = 'flex';
-        }, 3000);
+        // Show chat bubble after 3 seconds, but only once per 15 minutes
+        (function() {
+            var lastShown = localStorage.getItem('whatsappBubbleLastShown');
+            var now = Date.now();
+            var fifteenMin = 15 * 60 * 1000;
+
+            if (!lastShown || (now - parseInt(lastShown)) > fifteenMin) {
+                setTimeout(function() {
+                    var bubble = document.getElementById('whatsappBubble');
+                    if (bubble) {
+                        bubble.style.display = 'flex';
+                        localStorage.setItem('whatsappBubbleLastShown', now.toString());
+                    }
+                }, 3000);
+            }
+        })();
 
         // Hide navbar on scroll down, show on scroll up (mobile only)
         var lastScroll = 0;
