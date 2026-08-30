@@ -1,4 +1,4 @@
-# Hotel Sagar Bela — Website
+# Static - Hotel — Website
 
 A Flask-based website for Hotel Sagar Bela, Puri, with a public-facing site and an
 admin dashboard for managing content (floors/rooms, image galleries, homepage
