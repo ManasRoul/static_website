@@ -1532,6 +1532,11 @@ a {
         padding: 0.8rem 1rem;
     }
 
+    .nav-brand {
+        width: 100%;
+        text-align: left;
+    }
+
     .nav-links {
         gap: 0.3rem;
         flex-wrap: wrap;
@@ -1573,5 +1578,87 @@ a {
 
     .whatsapp-chat-bubble {
         width: 260px;
+    }
+}
+
+/* ========================================
+   DISCLAIMER POPUP
+   ======================================== */
+.disclaimer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 4, 94, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.disclaimer-box {
+    background: #ffffff;
+    max-width: 520px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(3, 4, 94, 0.35);
+    padding: 32px 28px;
+    text-align: center;
+    animation: disclaimerPop 0.3s ease;
+}
+
+@keyframes disclaimerPop {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.disclaimer-box h2 {
+    color: #0077b6;
+    margin-bottom: 16px;
+    font-size: 1.6rem;
+}
+
+.disclaimer-content {
+    color: #023e8a;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    text-align: left;
+    max-height: 45vh;
+    overflow-y: auto;
+    margin-bottom: 24px;
+}
+
+.disclaimer-content p {
+    margin-bottom: 12px;
+}
+
+.disclaimer-accept {
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.disclaimer-accept:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 119, 182, 0.4);
+}
+
+/* Prevent background scroll while disclaimer is open */
+body.disclaimer-open {
+    overflow: hidden;
+}
+
+@media (max-width: 480px) {
+    .disclaimer-box {
+        padding: 24px 18px;
+    }
+    .disclaimer-box h2 {
+        font-size: 1.35rem;
     }
 }
