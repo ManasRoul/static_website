@@ -50,19 +50,26 @@
     </div>
     <script>
         (function() {
-            var overlay = document.getElementById('disclaimerOverlay');
-            if (!overlay) return;
-            // Show only once per browser session
-            if (!sessionStorage.getItem('disclaimerAccepted')) {
-                overlay.style.display = 'flex';
-                document.body.classList.add('disclaimer-open');
+            function initDisclaimer() {
+                var overlay = document.getElementById('disclaimerOverlay');
+                var acceptBtn = document.getElementById('disclaimerAccept');
+                if (!overlay || !acceptBtn) return;
+                // Show only once per browser session
+                if (!sessionStorage.getItem('disclaimerAccepted')) {
+                    overlay.style.display = 'flex';
+                    document.body.classList.add('disclaimer-open');
+                }
+                acceptBtn.addEventListener('click', function() {
+                    overlay.style.display = 'none';
+                    document.body.classList.remove('disclaimer-open');
+                    sessionStorage.setItem('disclaimerAccepted', '1');
+                });
             }
-            function dismiss() {
-                overlay.style.display = 'none';
-                document.body.classList.remove('disclaimer-open');
-                sessionStorage.setItem('disclaimerAccepted', '1');
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDisclaimer);
+            } else {
+                initDisclaimer();
             }
-            document.getElementById('disclaimerAccept').addEventListener('click', dismiss);
         })();
     </script>
 
