@@ -1,0 +1,49 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Manage Images - {{ floor.name }} - Dashboard{% endblock %}
+
+{% block content %}
+<div class="dash-header">
+    <h1>Images: {{ floor.name }}</h1>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">&larr; Back to Floors</a>
+</div>
+
+<!-- Upload Section -->
+<div class="upload-section">
+    <h2>Upload Images</h2>
+    <form action="{{ url_for('dashboard_upload_image', floor_id=floor.id) }}" method="POST" enctype="multipart/form-data" class="upload-form">
+        <div class="form-group">
+            <label for="images">Select Images (png, jpg, jpeg, gif, svg, webp)</label>
+            <input type="file" id="images" name="images" multiple accept="image/*" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload Images</button>
+    </form>
+</div>
+
+<!-- Current Images -->
+<div class="images-section">
+    <h2>Current Images ({{ floor.images | length }})</h2>
+
+    {% if floor.images %}
+    <div class="image-grid">
+        {% for image in floor.images %}
+        <div class="image-card">
+            <div class="image-preview">
+                <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="{{ image.original_name }}">
+            </div>
+            <div class="image-info">
+                <p class="image-name" title="{{ image.original_name }}">{{ image.original_name }}</p>
+                <form action="{{ url_for('dashboard_delete_image', image_id=image.id) }}" method="POST" onsubmit="return confirm('Delete this image?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No images uploaded yet. Use the form above to upload images for this floor.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

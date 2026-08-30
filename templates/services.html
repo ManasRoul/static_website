@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Services - Hotel Sagar Bela, Puri | Hotel, Temple Visit & Cab{% endblock %}
+{% block meta_description %}Explore Hotel Sagar Bela services in Puri - comfortable hotel stay, guided temple visit & darshan assistance with Lord Jagannath sebayat, and reliable Lotus Cab travel service.{% endblock %}
+{% block meta_keywords %}Hotel Sagar Bela services, Puri temple visit, Jagannath darshan, Lotus cab service Puri, Puri hotel booking{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Our Services</h1>
+</section>
+
+<section class="page-content">
+    <p class="services-intro">We offer a range of services to make your stay comfortable and your trip memorable.</p>
+
+    <div class="services-grid">
+        <div class="service-card" onclick="document.getElementById('hotelModal').style.display='flex'" style="cursor:pointer;">
+            <div class="service-icon">&#127976;</div>
+            <h3>Hotel Service</h3>
+            <p>Clean and comfortable rooms (AC & Non AC) with modern amenities like free Wi-Fi, TVs, and Kitchen Facility (Indoor & Outdoor) ensuring a memorable and hassle-free stay.</p>
+        </div>
+
+        <div class="service-card" onclick="document.getElementById('templeModal').style.display='flex'" style="cursor:pointer;">
+            <div class="service-icon">🛕</div>
+            <h3>Temple Visit</h3>
+            <p>Guided temple visits to nearby sacred sites and spiritual destinations. We help you plan and organize hassle-free darshan trips with local expertise.</p>
+        </div>
+
+        <div class="service-card" onclick="document.getElementById('cabModal').style.display='flex'" style="cursor:pointer;">
+            <div class="service-icon">&#128663;</div>
+            <h3>Cab Service</h3>
+            <p>Reliable and affordable cab services for local sightseeing, airport transfers, and outstation trips. Available 24/7 for your convenience.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Modal Styles -->
+<style>
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 620px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.4s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-content.hotel {
+        border-top: 4px solid #2196F3;
+    }
+
+    .modal-content.temple {
+        border-top: 4px solid #FF9800;
+    }
+
+    .modal-content.cab {
+        border-top: 4px solid #4CAF50;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        background: #f0f0f0;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #555;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+        background: #e74c3c;
+        color: #fff;
+        transform: rotate(90deg);
+    }
+
+    .modal-content h2 {
+        margin-top: 0;
+        font-size: 1.5em;
+        color: #2c3e50;
+        padding-right: 30px;
+        line-height: 1.3;
+    }
+
+    .modal-content.hotel h2 { color: #1565C0; }
+    .modal-content.temple h2 { color: #E65100; }
+    .modal-content.cab h2 { color: #2E7D32; }
+
+    .modal-content h3 {
+        color: #444;
+        margin-top: 20px;
+        margin-bottom: 12px;
+        font-size: 1.1em;
+        position: relative;
+        padding-left: 12px;
+    }
+
+    .modal-content h3::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 2px;
+        bottom: 2px;
+        width: 3px;
+        border-radius: 3px;
+    }
+
+    .modal-content.hotel h3::before { background: #2196F3; }
+    .modal-content.temple h3::before { background: #FF9800; }
+    .modal-content.cab h3::before { background: #4CAF50; }
+
+    .modal-content p {
+        color: #555;
+        line-height: 1.7;
+        margin-bottom: 12px;
+    }
+
+    .modal-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .modal-content ul li {
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 3px solid #ddd;
+        transition: all 0.2s ease;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .modal-content.hotel ul li { border-left-color: #2196F3; }
+    .modal-content.temple ul li { border-left-color: #FF9800; }
+    .modal-content.cab ul li { border-left-color: #4CAF50; }
+
+    .modal-content ul li:hover {
+        background: #eef2ff;
+        transform: translateX(5px);
+    }
+
+    .modal-content ul li strong {
+        color: #333;
+    }
+
+    .modal-footer {
+        margin-top: 20px;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .modal-content.hotel .modal-footer { background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%); }
+    .modal-content.temple .modal-footer { background: linear-gradient(135deg, #FF9800 0%, #E65100 100%); }
+    .modal-content.cab .modal-footer { background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); }
+
+    .modal-icon {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 3px;
+    }
+</style>
+
+<!-- Hotel Service Modal -->
+<div id="hotelModal" class="modal-overlay">
+    <div class="modal-content hotel">
+        <button class="modal-close" onclick="document.getElementById('hotelModal').style.display='none'">&times;</button>
+        <div class="modal-icon">🏨</div>
+        <h2>Comfortable Stay with Modern Amenities at Hotel Sagar Bela</h2>
+        <p>At Hotel Sagar Bela, we are committed to providing a relaxing and convenient stay for every guest. Whether you are visiting for a spiritual journey, family vacation, or peaceful seaside getaway, we ensure comfort with essential modern facilities.</p>
+        <h3>Our Features Include:</h3>
+        <ul>
+            <li><strong>Free WiFi</strong> – Stay connected anytime</li>
+            <li><strong>AC & Non-AC Rooms</strong> – Choose your comfort</li>
+            <li><strong>Sea View Rooms</strong> – Enjoy refreshing ocean views</li>
+            <li><strong>Private Kitchen Facilities</strong> – Cook your own meals comfortably</li>
+            <li><strong>Group Kitchen</strong> – Ideal for families and group stays</li>
+            <li><strong>Geyser</strong> – 24/7 hot water availability</li>
+            <li><strong>Water Purifier</strong> – Safe and clean drinking water</li>
+            <li><strong>24/7 Reception</strong> – Always available for your assistance</li>
+            <li><strong>Pet-Friendly Environment</strong> – Your pets are welcome</li>
+        </ul>
+        <p>We focus on providing a budget-friendly, clean, and comfortable stay with all the facilities you need for a pleasant experience.</p>
+        <div class="modal-footer">Book your stay with us and enjoy comfort near the sea with warm hospitality.</div>
+    </div>
+</div>
+
+<!-- Temple Visit Modal -->
+<div id="templeModal" class="modal-overlay">
+    <div class="modal-content temple">
+        <button class="modal-close" onclick="document.getElementById('templeModal').style.display='none'">&times;</button>
+        <div class="modal-icon">🛕</div>
+        <h2>Temple Visit Services</h2>
+        <p>Facilitating Temple Visit Services through <strong>Sri Ranajit Kar, Chhatradhari Sebayat of Lord Jagannath</strong>, in friendly collaboration with <strong>Hotel Sagar Bela</strong>.</p>
+        <p>We offer trusted and authentic assistance for a smooth and meaningful temple visit experience. With deep knowledge of temple rituals, customs, and procedures, our sebayat ensures devotees receive proper guidance and respectful support.</p>
+        <h3>Services include:</h3>
+        <ul>
+            <li>Guided Darshan assistance</li>
+            <li>Puja arrangement support</li>
+            <li>Explanation of temple traditions and rituals</li>
+            <li>Special care for elderly and first-time visitors</li>
+        </ul>
+        <div class="modal-footer">Experience a peaceful and spiritually enriching visit with genuine sebayat guidance and comfortable hospitality support.</div>
+    </div>
+</div>
+
+<!-- Cab Service Modal -->
+<div id="cabModal" class="modal-overlay">
+    <div class="modal-content cab">
+        <button class="modal-close" onclick="document.getElementById('cabModal').style.display='none'">&times;</button>
+        <div class="modal-icon">🚗</div>
+        <h2>Lotus Cab – Our In-House Travel & Tour Service</h2>
+        <p>At <strong>Hotel Sagar Bela</strong>, we proudly offer <strong>Lotus Cab</strong>, our reliable in-house cab facility designed to provide safe, comfortable, and hassle-free travel for individuals, families, and groups. Whether you are planning a temple visit, a short getaway, or an extended vacation, we ensure a smooth journey from beginning to end.</p>
+        <h3>Our Cab Services Include:</h3>
+        <ul>
+            <li><strong>Local & Outstation Travel</strong> – Well-maintained vehicles with experienced and courteous drivers for safe and comfortable journeys.</li>
+            <li><strong>Customized Tour Packages</strong> – Personalized travel plans at affordable rates to suit your schedule and preferences.</li>
+            <li><strong>Pickup & Drop Facility</strong> – Convenient airport, railway station, and doorstep pickup and drop services.</li>
+            <li><strong>24×7 Assistance</strong> – Dedicated support to assist you at any time during your travel.</li>
+        </ul>
+        <div class="modal-footer">With a focus on safety, comfort, and genuine hospitality, Lotus Cab ensures every journey becomes a pleasant and memorable experience.</div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.modal-overlay').forEach(function(modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

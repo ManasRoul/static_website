@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none">
+  <!-- Rose - main flower -->
+  <g transform="translate(25, 25)">
+    <!-- Outer petals -->
+    <ellipse cx="0" cy="-12" rx="8" ry="14" fill="#e8a0b4" transform="rotate(0 0 0)"/>
+    <ellipse cx="0" cy="-12" rx="8" ry="14" fill="#e091a8" transform="rotate(60 0 0)"/>
+    <ellipse cx="0" cy="-12" rx="8" ry="14" fill="#d4839c" transform="rotate(120 0 0)"/>
+    <ellipse cx="0" cy="-12" rx="8" ry="14" fill="#e8a0b4" transform="rotate(180 0 0)"/>
+    <ellipse cx="0" cy="-12" rx="8" ry="14" fill="#e091a8" transform="rotate(240 0 0)"/>
+    <ellipse cx="0" cy="-12" rx="8" ry="14" fill="#d4839c" transform="rotate(300 0 0)"/>
+    <!-- Inner petals -->
+    <ellipse cx="0" cy="-7" rx="5" ry="9" fill="#c9677e" transform="rotate(30 0 0)"/>
+    <ellipse cx="0" cy="-7" rx="5" ry="9" fill="#c9677e" transform="rotate(90 0 0)"/>
+    <ellipse cx="0" cy="-7" rx="5" ry="9" fill="#c9677e" transform="rotate(150 0 0)"/>
+    <ellipse cx="0" cy="-7" rx="5" ry="9" fill="#c9677e" transform="rotate(210 0 0)"/>
+    <ellipse cx="0" cy="-7" rx="5" ry="9" fill="#c9677e" transform="rotate(270 0 0)"/>
+    <!-- Center -->
+    <circle cx="0" cy="0" r="5" fill="#b5546a"/>
+    <circle cx="0" cy="0" r="3" fill="#a04558"/>
+  </g>
+
+  <!-- Small rose bud top right -->
+  <g transform="translate(65, 12)">
+    <ellipse cx="0" cy="-5" rx="4" ry="7" fill="#f0b8c8" transform="rotate(0 0 0)"/>
+    <ellipse cx="0" cy="-5" rx="4" ry="7" fill="#e8a0b8" transform="rotate(72 0 0)"/>
+    <ellipse cx="0" cy="-5" rx="4" ry="7" fill="#f0b8c8" transform="rotate(144 0 0)"/>
+    <ellipse cx="0" cy="-5" rx="4" ry="7" fill="#e8a0b8" transform="rotate(216 0 0)"/>
+    <ellipse cx="0" cy="-5" rx="4" ry="7" fill="#f0b8c8" transform="rotate(288 0 0)"/>
+    <circle cx="0" cy="0" r="3" fill="#d4839c"/>
+  </g>
+
+  <!-- Small daisy-like flower -->
+  <g transform="translate(12, 65)">
+    <ellipse cx="0" cy="-6" rx="3" ry="7" fill="#a8d8ea" transform="rotate(0 0 0)"/>
+    <ellipse cx="0" cy="-6" rx="3" ry="7" fill="#a8d8ea" transform="rotate(60 0 0)"/>
+    <ellipse cx="0" cy="-6" rx="3" ry="7" fill="#a8d8ea" transform="rotate(120 0 0)"/>
+    <ellipse cx="0" cy="-6" rx="3" ry="7" fill="#a8d8ea" transform="rotate(180 0 0)"/>
+    <ellipse cx="0" cy="-6" rx="3" ry="7" fill="#a8d8ea" transform="rotate(240 0 0)"/>
+    <ellipse cx="0" cy="-6" rx="3" ry="7" fill="#a8d8ea" transform="rotate(300 0 0)"/>
+    <circle cx="0" cy="0" r="3.5" fill="#ffd700"/>
+  </g>
+
+  <!-- Leaves -->
+  <path d="M 40 38 Q 55 50 50 65" stroke="#6ab877" stroke-width="1.5" fill="none"/>
+  <path d="M 50 65 C 45 55, 55 55, 50 65" fill="#7ec88a" opacity="0.7"/>
+  <path d="M 55 50 C 50 45, 60 42, 55 50" fill="#6ab877" opacity="0.6"/>
+
+  <path d="M 38 40 Q 50 55 65 50" stroke="#6ab877" stroke-width="1.5" fill="none"/>
+  <path d="M 65 50 C 58 45, 60 55, 65 50" fill="#7ec88a" opacity="0.7"/>
+
+  <!-- Stem curves -->
+  <path d="M 35 35 Q 60 30 80 15" stroke="#5a9e68" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M 35 35 Q 30 60 15 80" stroke="#5a9e68" stroke-width="1" fill="none" opacity="0.5"/>
+
+  <!-- Tiny accent leaves -->
+  <ellipse cx="72" cy="18" rx="4" ry="2" fill="#7ec88a" transform="rotate(-30 72 18)" opacity="0.6"/>
+  <ellipse cx="18" cy="72" rx="4" ry="2" fill="#7ec88a" transform="rotate(60 18 72)" opacity="0.6"/>
+
+  <!-- Tiny buds -->
+  <circle cx="85" cy="10" r="2.5" fill="#f0c8d8" opacity="0.7"/>
+  <circle cx="10" cy="85" r="2.5" fill="#c8e0f0" opacity="0.7"/>
+  <circle cx="48" cy="8" r="1.5" fill="#e8a0b4" opacity="0.5"/>
+  <circle cx="8" cy="48" r="1.5" fill="#a8d8ea" opacity="0.5"/>
+
+  <!-- Scattered dots for sparkle -->
+  <circle cx="95" cy="5" r="1" fill="#d4839c" opacity="0.4"/>
+  <circle cx="5" cy="95" r="1" fill="#a8d8ea" opacity="0.4"/>
+  <circle cx="75" cy="25" r="1" fill="#ffd700" opacity="0.3"/>
+  <circle cx="25" cy="75" r="1" fill="#ffd700" opacity="0.3"/>
+</svg>

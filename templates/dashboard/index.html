@@ -1,0 +1,741 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dash-split">
+    <!-- Left Sidebar -->
+    <div class="dash-left">
+        <!-- Tabs -->
+        <div class="dash-tabs">
+            <button class="dash-tab active" id="tab-floors-btn" onclick="switchTab('floors')">Floors</button>
+            <button class="dash-tab" id="tab-slider-btn" onclick="switchTab('slider')">Slider</button>
+            <button class="dash-tab" id="tab-offers-btn" onclick="switchTab('offers')">Offers</button>
+            <button class="dash-tab" id="tab-posts-btn" onclick="switchTab('posts')">Posts</button>
+            <button class="dash-tab" id="tab-booking-btn" onclick="switchTab('booking')">Booking</button>
+        </div>
+
+        <!-- Floors Tab Content -->
+        <div class="tab-content" id="tab-floors">
+            <div class="dash-left-header">
+                <h2>Floors</h2>
+                <button class="btn btn-primary btn-sm" onclick="showAddForm()">+ Add</button>
+            </div>
+
+            <div class="floor-list">
+                {% if floors %}
+                    {% for floor in floors %}
+                    <div class="floor-list-item" id="floor-item-{{ floor.id }}">
+                        <div class="floor-list-info">
+                            <strong>{{ floor.name }}</strong>
+                            <span class="floor-meta">{{ floor.images | length }} image(s) &middot; Order: {{ floor.order }}</span>
+                        </div>
+                        <div class="floor-list-actions">
+                            <button class="btn btn-xs btn-info" onclick="showImages({{ floor.id }})" title="Manage Images">&#128247;</button>
+                            <button class="btn btn-xs btn-warning" onclick="showEditForm({{ floor.id }}, '{{ floor.name }}', '{{ floor.description or '' }}', {{ floor.order }})" title="Edit">&#9998;</button>
+                            <form action="{{ url_for('dashboard_delete_floor', floor_id=floor.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Delete {{ floor.name }} and all its images?');">
+                                <button type="submit" class="btn btn-xs btn-danger" title="Delete">&#128465;</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state-sm">
+                        <p>No floors yet. Click "+ Add" to create one.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Slider Tab Content -->
+        <div class="tab-content" id="tab-slider" style="display: none;">
+            <div class="dash-left-header">
+                <h2>Slides</h2>
+                <button class="btn btn-primary btn-sm" onclick="showAddSlideForm()">+ Add</button>
+            </div>
+
+            <div class="floor-list">
+                {% if slides %}
+                    {% for slide in slides %}
+                    <div class="floor-list-item" id="slide-item-{{ slide.id }}">
+                        <div class="floor-list-info">
+                            <strong>{{ slide.title }}</strong>
+                            <span class="floor-meta">
+                                {{ slide.subtitle[:30] }}{% if slide.subtitle|length > 30 %}...{% endif %}
+                                &middot; Order: {{ slide.order }}
+                                {% if slide.image_filename %} &middot; &#128444;{% endif %}
+                            </span>
+                        </div>
+                        <div class="floor-list-actions">
+                            <button class="btn btn-xs btn-warning" onclick="showEditSlideForm({{ slide.id }}, '{{ slide.title | e }}', '{{ slide.subtitle | e }}', {{ slide.order }}, '{{ slide.image_filename }}')" title="Edit">&#9998;</button>
+                            <form action="{{ url_for('dashboard_delete_slide', slide_id=slide.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Delete this slide?');">
+                                <button type="submit" class="btn btn-xs btn-danger" title="Delete">&#128465;</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state-sm">
+                        <p>No slides yet. Click "+ Add" to create one.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Offers Tab Content -->
+        <div class="tab-content" id="tab-offers" style="display: none;">
+            <div class="dash-left-header">
+                <h2>Offers</h2>
+                <button class="btn btn-primary btn-sm" onclick="showAddOfferForm()">+ Add</button>
+            </div>
+
+            <div class="floor-list">
+                {% if offers %}
+                    {% for offer in offers %}
+                    <div class="floor-list-item" id="offer-item-{{ offer.id }}">
+                        <div class="floor-list-info">
+                            <strong>{{ offer.title }}</strong>
+                            <span class="floor-meta">
+                                {% if offer.is_active %}<span style="color:#25D366;">● Active</span>{% else %}<span style="color:#999;">● Inactive</span>{% endif %}
+                                {% if offer.image_filename %} &middot; &#128444;{% endif %}
+                            </span>
+                        </div>
+                        <div class="floor-list-actions">
+                            <form action="{{ url_for('dashboard_toggle_offer', offer_id=offer.id) }}" method="POST" class="inline-form">
+                                <button type="submit" class="btn btn-xs {% if offer.is_active %}btn-success{% else %}btn-secondary{% endif %}" title="Toggle">{% if offer.is_active %}ON{% else %}OFF{% endif %}</button>
+                            </form>
+                            <button class="btn btn-xs btn-warning" onclick="showEditOfferForm({{ offer.id }}, '{{ offer.title | e }}', '{{ offer.description | e }}', '{{ offer.whatsapp_message | e }}', '{{ offer.image_filename }}')" title="Edit">&#9998;</button>
+                            <form action="{{ url_for('dashboard_delete_offer', offer_id=offer.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Delete this offer?');">
+                                <button type="submit" class="btn btn-xs btn-danger" title="Delete">&#128465;</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state-sm">
+                        <p>No offers yet. Click "+ Add" to create one.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Posts Tab Content -->
+        <div class="tab-content" id="tab-posts" style="display: none;">
+            <div class="dash-left-header">
+                <h2>Posts</h2>
+                <button class="btn btn-primary btn-sm" onclick="showAddPostForm()">+ Add</button>
+            </div>
+
+            <div class="floor-list">
+                {% if posts %}
+                    {% for post in posts %}
+                    <div class="floor-list-item" id="post-item-{{ post.id }}">
+                        <div class="floor-list-info">
+                            <strong>{{ post.title }}</strong>
+                            <span class="floor-meta">
+                                {% if post.is_active %}<span style="color:#25D366;">● Enabled</span>{% else %}<span style="color:#999;">● Disabled</span>{% endif %}
+                                &middot; Order: {{ post.order }}
+                                {% if post.image_filename %} &middot; &#128444;{% endif %}
+                            </span>
+                        </div>
+                        <div class="floor-list-actions">
+                            <form action="{{ url_for('dashboard_toggle_post', post_id=post.id) }}" method="POST" class="inline-form">
+                                <button type="submit" class="btn btn-xs {% if post.is_active %}btn-success{% else %}btn-secondary{% endif %}" title="Toggle">{% if post.is_active %}ON{% else %}OFF{% endif %}</button>
+                            </form>
+                            <button class="btn btn-xs btn-warning" onclick="showEditPostForm({{ post.id }}, '{{ post.title | e }}', `{{ post.content | e }}`, {{ post.order }}, '{{ post.image_filename }}')" title="Edit">&#9998;</button>
+                            <form action="{{ url_for('dashboard_delete_post', post_id=post.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Delete this post?');">
+                                <button type="submit" class="btn btn-xs btn-danger" title="Delete">&#128465;</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state-sm">
+                        <p>No posts yet. Click "+ Add" to create one.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Booking Tab Content -->
+        <div class="tab-content" id="tab-booking" style="display: none;">
+            <div class="dash-left-header">
+                <h2>Booking Info</h2>
+            </div>
+            <p style="padding: 0 1rem; color: #888; font-size: 0.85rem;">Edit the booking block shown on the homepage. Use the form on the right &#128073;</p>
+        </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="dash-right">
+        <div id="right-panel-placeholder" class="right-placeholder">
+            <p>&#128072; Select an item to edit, or click "+ Add" to create a new one.</p>
+        </div>
+
+        <!-- Floor Form -->
+        <div id="right-panel-form" class="right-form-container" style="display: none;">
+            <div class="right-form-header">
+                <h2 id="form-title">Add New Floor</h2>
+                <button class="btn btn-sm btn-secondary" onclick="hideAll()">&#10005; Close</button>
+            </div>
+
+            <form method="POST" id="floorForm" class="dash-form">
+                <div class="form-group">
+                    <label for="name">Floor Name <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Fourth Floor" required>
+                    <span class="error-msg" id="nameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Optional description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="order">Display Order</label>
+                    <input type="number" id="order" name="order" value="0" min="0">
+                    <small>Lower numbers appear first on the homepage.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="form-submit-btn">Create Floor</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideAll()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Slide Form -->
+        <div id="right-panel-slide-form" class="right-form-container" style="display: none;">
+            <div class="right-form-header">
+                <h2 id="slide-form-title">Add New Slide</h2>
+                <button class="btn btn-sm btn-secondary" onclick="hideAll()">&#10005; Close</button>
+            </div>
+
+            <form method="POST" id="slideForm" class="dash-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="slide-title">Slide Title <span class="required">*</span></label>
+                    <input type="text" id="slide-title" name="title" placeholder="e.g. Welcome to Our Website" required>
+                    <span class="error-msg" id="slideTitleError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="slide-subtitle">Subtitle / Text</label>
+                    <textarea id="slide-subtitle" name="subtitle" rows="3" placeholder="Text displayed below the title"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="slide-image">Slide Background Image</label>
+                    <input type="file" id="slide-image" name="slide_image" accept="image/*">
+                    <small>Upload an image for the slide background. Leave empty to keep a gradient.</small>
+                    <div id="slide-current-image" class="current-image-preview" style="display: none;">
+                        <p>Current image:</p>
+                        <img id="slide-preview-img" src="" alt="Current slide image">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="slide-order">Display Order</label>
+                    <input type="number" id="slide-order" name="order" value="0" min="0">
+                    <small>Lower numbers appear first in the slider.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="slide-submit-btn">Create Slide</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideAll()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Offer Form -->
+        <div id="right-panel-offer-form" class="right-form-container" style="display: none;">
+            <div class="right-form-header">
+                <h2 id="offer-form-title">Add New Offer</h2>
+                <button class="btn btn-sm btn-secondary" onclick="hideAll()">&#10005; Close</button>
+            </div>
+
+            <form method="POST" id="offerForm" class="dash-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="offer-title">Offer Title <span class="required">*</span></label>
+                    <input type="text" id="offer-title" name="title" placeholder="e.g. Summer Special 20% Off" required>
+                    <span class="error-msg" id="offerTitleError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="offer-description">Description (optional)</label>
+                    <textarea id="offer-description" name="description" rows="3" placeholder="Offer details shown in the popup"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="offer-image">Offer Image</label>
+                    <input type="file" id="offer-image" name="offer_image" accept="image/*">
+                    <small>Upload an attractive offer image/banner.</small>
+                    <div id="offer-current-image" class="current-image-preview" style="display: none;">
+                        <p>Current image:</p>
+                        <img id="offer-preview-img" src="" alt="Current offer image">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="offer-whatsapp">WhatsApp Message</label>
+                    <input type="text" id="offer-whatsapp" name="whatsapp_message" value="Hi, I'm interested in your offer" placeholder="Pre-filled WhatsApp message">
+                    <small>This message will be pre-filled when user clicks the offer.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="offer-submit-btn">Create Offer</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideAll()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Post Form -->
+        <div id="right-panel-post-form" class="right-form-container" style="display: none;">
+            <div class="right-form-header">
+                <h2 id="post-form-title">Add New Post</h2>
+                <button class="btn btn-sm btn-secondary" onclick="hideAll()">&#10005; Close</button>
+            </div>
+
+            <form method="POST" id="postForm" class="dash-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="post-title">Post Title <span class="required">*</span></label>
+                    <input type="text" id="post-title" name="title" placeholder="e.g. Special Weekend Offer" required>
+                    <span class="error-msg" id="postTitleError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-content">Content</label>
+                    <textarea id="post-content" name="content" rows="4" placeholder="Post content or description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-image">Post Image</label>
+                    <input type="file" id="post-image" name="post_image" accept="image/*">
+                    <small>Upload an image for the post.</small>
+                    <div id="post-current-image" class="current-image-preview" style="display: none;">
+                        <p>Current image:</p>
+                        <img id="post-preview-img" src="" alt="Current post image">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-order">Display Order</label>
+                    <input type="number" id="post-order" name="order" value="0" min="0">
+                    <small>Lower numbers appear first.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="post-submit-btn">Create Post</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideAll()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Images Panel -->
+        <div id="right-panel-images" class="right-images-container" style="display: none;">
+            <!-- Images content loaded via AJAX -->
+        </div>
+
+        <!-- Booking Form -->
+        <div id="right-panel-booking-form" class="right-form-container" style="display: none;">
+            <div class="right-form-header">
+                <h2>Edit Booking Block</h2>
+            </div>
+
+            <form method="POST" action="{{ url_for('dashboard_update_booking') }}" class="dash-form">
+                <div class="form-group">
+                    <label for="booking-heading">Heading</label>
+                    <input type="text" id="booking-heading" name="heading" value="{{ booking.heading if booking else 'Book Your Stay' }}" placeholder="e.g. Book Your Stay">
+                </div>
+
+                <div class="form-group">
+                    <label for="booking-subtext">Subtext</label>
+                    <input type="text" id="booking-subtext" name="subtext" value="{{ booking.subtext if booking else '' }}" placeholder="e.g. Call us now to reserve your room!">
+                </div>
+
+                <div class="form-group">
+                    <label for="booking-phone">Booking Phone Number <span class="required">*</span></label>
+                    <input type="text" id="booking-phone" name="phone" value="{{ booking.phone if booking else '' }}" placeholder="e.g. +91-9439139083" required>
+                    <small>This number will be clickable to call from the homepage booking block.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="booking-cab-phone">Cab Service Phone Number</label>
+                    <input type="text" id="booking-cab-phone" name="cab_phone" value="{{ booking.cab_phone if booking else '' }}" placeholder="e.g. +91-9776177794">
+                    <small>Cab service contact number for the booking block.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Booking Info</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // --- Elements ---
+    const placeholder = document.getElementById('right-panel-placeholder');
+    const formPanel = document.getElementById('right-panel-form');
+    const slideFormPanel = document.getElementById('right-panel-slide-form');
+    const offerFormPanel = document.getElementById('right-panel-offer-form');
+    const postFormPanel = document.getElementById('right-panel-post-form');
+    const bookingFormPanel = document.getElementById('right-panel-booking-form');
+    const imagesPanel = document.getElementById('right-panel-images');
+
+    // Floor form elements
+    const floorForm = document.getElementById('floorForm');
+    const formTitle = document.getElementById('form-title');
+    const formSubmitBtn = document.getElementById('form-submit-btn');
+    const nameInput = document.getElementById('name');
+    const descInput = document.getElementById('description');
+    const orderInput = document.getElementById('order');
+    const nameError = document.getElementById('nameError');
+
+    // Slide form elements
+    const slideForm = document.getElementById('slideForm');
+    const slideFormTitle = document.getElementById('slide-form-title');
+    const slideSubmitBtn = document.getElementById('slide-submit-btn');
+    const slideTitleInput = document.getElementById('slide-title');
+    const slideSubtitleInput = document.getElementById('slide-subtitle');
+    const slideOrderInput = document.getElementById('slide-order');
+    const slideTitleError = document.getElementById('slideTitleError');
+    const slideCurrentImage = document.getElementById('slide-current-image');
+    const slidePreviewImg = document.getElementById('slide-preview-img');
+
+    // --- Tab Switching ---
+    function switchTab(tab) {
+        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+
+        document.getElementById('tab-' + tab + '-btn').classList.add('active');
+        document.getElementById('tab-' + tab).style.display = 'block';
+
+        hideAll();
+
+        // Auto-show booking form when booking tab is active
+        if (tab === 'booking') {
+            hideAllPanels();
+            bookingFormPanel.style.display = 'block';
+        }
+    }
+
+    // --- Panel Management ---
+    function hideAllPanels() {
+        placeholder.style.display = 'none';
+        formPanel.style.display = 'none';
+        slideFormPanel.style.display = 'none';
+        offerFormPanel.style.display = 'none';
+        postFormPanel.style.display = 'none';
+        bookingFormPanel.style.display = 'none';
+        imagesPanel.style.display = 'none';
+        document.querySelectorAll('.floor-list-item').forEach(el => el.classList.remove('active'));
+    }
+
+    function hideAll() {
+        hideAllPanels();
+        placeholder.style.display = 'flex';
+    }
+
+    // --- Floor Functions ---
+    function showAddForm() {
+        hideAllPanels();
+        floorForm.action = "{{ url_for('dashboard_add_floor') }}";
+        formTitle.textContent = "Add New Floor";
+        formSubmitBtn.textContent = "Create Floor";
+        nameInput.value = '';
+        descInput.value = '';
+        orderInput.value = '0';
+        nameError.textContent = '';
+        nameInput.classList.remove('input-error');
+        formPanel.style.display = 'block';
+        nameInput.focus();
+    }
+
+    function showEditForm(id, name, description, order) {
+        hideAllPanels();
+        floorForm.action = "/dashboard/floor/" + id + "/edit";
+        formTitle.textContent = "Edit Floor";
+        formSubmitBtn.textContent = "Update Floor";
+        nameInput.value = name;
+        descInput.value = description;
+        orderInput.value = order;
+        nameError.textContent = '';
+        nameInput.classList.remove('input-error');
+        formPanel.style.display = 'block';
+        nameInput.focus();
+
+        const item = document.getElementById('floor-item-' + id);
+        if (item) item.classList.add('active');
+    }
+
+    function showImages(floorId) {
+        hideAllPanels();
+        imagesPanel.innerHTML = '<div class="right-placeholder"><p>Loading images...</p></div>';
+        imagesPanel.style.display = 'block';
+
+        const item = document.getElementById('floor-item-' + floorId);
+        if (item) item.classList.add('active');
+
+        fetch('/dashboard/floor/' + floorId + '/images', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            imagesPanel.innerHTML = html;
+        })
+        .catch(err => {
+            imagesPanel.innerHTML = '<div class="right-placeholder"><p>Error loading images.</p></div>';
+        });
+    }
+
+    // --- Slide Functions ---
+    function showAddSlideForm() {
+        hideAllPanels();
+        slideForm.action = "{{ url_for('dashboard_add_slide') }}";
+        slideFormTitle.textContent = "Add New Slide";
+        slideSubmitBtn.textContent = "Create Slide";
+        slideTitleInput.value = '';
+        slideSubtitleInput.value = '';
+        slideOrderInput.value = '0';
+        slideTitleError.textContent = '';
+        slideTitleInput.classList.remove('input-error');
+        slideCurrentImage.style.display = 'none';
+        document.getElementById('slide-image').value = '';
+        slideFormPanel.style.display = 'block';
+        slideTitleInput.focus();
+    }
+
+    function showEditSlideForm(id, title, subtitle, order, imageFilename) {
+        hideAllPanels();
+        slideForm.action = "/dashboard/slide/" + id + "/edit";
+        slideFormTitle.textContent = "Edit Slide";
+        slideSubmitBtn.textContent = "Update Slide";
+        slideTitleInput.value = title;
+        slideSubtitleInput.value = subtitle;
+        slideOrderInput.value = order;
+        slideTitleError.textContent = '';
+        slideTitleInput.classList.remove('input-error');
+        document.getElementById('slide-image').value = '';
+
+        if (imageFilename) {
+            slidePreviewImg.src = '/static/uploads/' + imageFilename;
+            slideCurrentImage.style.display = 'block';
+        } else {
+            slideCurrentImage.style.display = 'none';
+        }
+
+        slideFormPanel.style.display = 'block';
+        slideTitleInput.focus();
+
+        const item = document.getElementById('slide-item-' + id);
+        if (item) item.classList.add('active');
+    }
+
+    // Offer form elements
+    const offerForm = document.getElementById('offerForm');
+    const offerFormTitle = document.getElementById('offer-form-title');
+    const offerSubmitBtn = document.getElementById('offer-submit-btn');
+    const offerTitleInput = document.getElementById('offer-title');
+    const offerDescInput = document.getElementById('offer-description');
+    const offerWhatsappInput = document.getElementById('offer-whatsapp');
+    const offerTitleError = document.getElementById('offerTitleError');
+    const offerCurrentImage = document.getElementById('offer-current-image');
+    const offerPreviewImg = document.getElementById('offer-preview-img');
+
+    // Post form elements
+    const postForm = document.getElementById('postForm');
+    const postFormTitle = document.getElementById('post-form-title');
+    const postSubmitBtn = document.getElementById('post-submit-btn');
+    const postTitleInput = document.getElementById('post-title');
+    const postContentInput = document.getElementById('post-content');
+    const postOrderInput = document.getElementById('post-order');
+    const postTitleError = document.getElementById('postTitleError');
+    const postCurrentImage = document.getElementById('post-current-image');
+    const postPreviewImg = document.getElementById('post-preview-img');
+
+    // --- Offer Functions ---
+    function showAddOfferForm() {
+        hideAllPanels();
+        offerForm.action = "{{ url_for('dashboard_add_offer') }}";
+        offerFormTitle.textContent = "Add New Offer";
+        offerSubmitBtn.textContent = "Create Offer";
+        offerTitleInput.value = '';
+        offerDescInput.value = '';
+        offerWhatsappInput.value = "Hi, I'm interested in your offer";
+        offerTitleError.textContent = '';
+        offerTitleInput.classList.remove('input-error');
+        offerCurrentImage.style.display = 'none';
+        document.getElementById('offer-image').value = '';
+        offerFormPanel.style.display = 'block';
+        offerTitleInput.focus();
+    }
+
+    function showEditOfferForm(id, title, description, whatsappMessage, imageFilename) {
+        hideAllPanels();
+        offerForm.action = "/dashboard/offer/" + id + "/edit";
+        offerFormTitle.textContent = "Edit Offer";
+        offerSubmitBtn.textContent = "Update Offer";
+        offerTitleInput.value = title;
+        offerDescInput.value = description;
+        offerWhatsappInput.value = whatsappMessage;
+        offerTitleError.textContent = '';
+        offerTitleInput.classList.remove('input-error');
+        document.getElementById('offer-image').value = '';
+
+        if (imageFilename) {
+            offerPreviewImg.src = '/static/uploads/' + imageFilename;
+            offerCurrentImage.style.display = 'block';
+        } else {
+            offerCurrentImage.style.display = 'none';
+        }
+
+        offerFormPanel.style.display = 'block';
+        offerTitleInput.focus();
+
+        const item = document.getElementById('offer-item-' + id);
+        if (item) item.classList.add('active');
+    }
+
+    // --- Post Functions ---
+    function showAddPostForm() {
+        hideAllPanels();
+        postForm.action = "{{ url_for('dashboard_add_post') }}";
+        postFormTitle.textContent = "Add New Post";
+        postSubmitBtn.textContent = "Create Post";
+        postTitleInput.value = '';
+        postContentInput.value = '';
+        postOrderInput.value = '0';
+        postTitleError.textContent = '';
+        postTitleInput.classList.remove('input-error');
+        postCurrentImage.style.display = 'none';
+        document.getElementById('post-image').value = '';
+        postFormPanel.style.display = 'block';
+        postTitleInput.focus();
+    }
+
+    function showEditPostForm(id, title, content, order, imageFilename) {
+        hideAllPanels();
+        postForm.action = "/dashboard/post/" + id + "/edit";
+        postFormTitle.textContent = "Edit Post";
+        postSubmitBtn.textContent = "Update Post";
+        postTitleInput.value = title;
+        postContentInput.value = content;
+        postOrderInput.value = order;
+        postTitleError.textContent = '';
+        postTitleInput.classList.remove('input-error');
+        document.getElementById('post-image').value = '';
+
+        if (imageFilename) {
+            postPreviewImg.src = '/static/uploads/' + imageFilename;
+            postCurrentImage.style.display = 'block';
+        } else {
+            postCurrentImage.style.display = 'none';
+        }
+
+        postFormPanel.style.display = 'block';
+        postTitleInput.focus();
+
+        const item = document.getElementById('post-item-' + id);
+        if (item) item.classList.add('active');
+    }
+
+    // --- Validation ---
+    floorForm.addEventListener('submit', function(e) {
+        const name = nameInput.value.trim();
+        if (!name) {
+            e.preventDefault();
+            nameError.textContent = 'Floor name is required.';
+            nameInput.classList.add('input-error');
+            nameInput.focus();
+        }
+    });
+
+    nameInput.addEventListener('input', function() {
+        if (nameInput.classList.contains('input-error') && nameInput.value.trim()) {
+            nameError.textContent = '';
+            nameInput.classList.remove('input-error');
+        }
+    });
+
+    slideForm.addEventListener('submit', function(e) {
+        const title = slideTitleInput.value.trim();
+        if (!title) {
+            e.preventDefault();
+            slideTitleError.textContent = 'Slide title is required.';
+            slideTitleInput.classList.add('input-error');
+            slideTitleInput.focus();
+        }
+    });
+
+    slideTitleInput.addEventListener('input', function() {
+        if (slideTitleInput.classList.contains('input-error') && slideTitleInput.value.trim()) {
+            slideTitleError.textContent = '';
+            slideTitleInput.classList.remove('input-error');
+        }
+    });
+
+    offerForm.addEventListener('submit', function(e) {
+        const title = offerTitleInput.value.trim();
+        if (!title) {
+            e.preventDefault();
+            offerTitleError.textContent = 'Offer title is required.';
+            offerTitleInput.classList.add('input-error');
+            offerTitleInput.focus();
+        }
+    });
+
+    offerTitleInput.addEventListener('input', function() {
+        if (offerTitleInput.classList.contains('input-error') && offerTitleInput.value.trim()) {
+            offerTitleError.textContent = '';
+            offerTitleInput.classList.remove('input-error');
+        }
+    });
+
+    postForm.addEventListener('submit', function(e) {
+        const title = postTitleInput.value.trim();
+        if (!title) {
+            e.preventDefault();
+            postTitleError.textContent = 'Post title is required.';
+            postTitleInput.classList.add('input-error');
+            postTitleInput.focus();
+        }
+    });
+
+    postTitleInput.addEventListener('input', function() {
+        if (postTitleInput.classList.contains('input-error') && postTitleInput.value.trim()) {
+            postTitleError.textContent = '';
+            postTitleInput.classList.remove('input-error');
+        }
+    });
+
+    // --- Auto-open from URL params ---
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const showImagesId = params.get('show_images');
+        const tab = params.get('tab');
+
+        if (tab === 'slider') {
+            switchTab('slider');
+        }
+        if (tab === 'offers') {
+            switchTab('offers');
+        }
+        if (tab === 'posts') {
+            switchTab('posts');
+        }
+        if (tab === 'booking') {
+            switchTab('booking');
+        }
+
+        if (showImagesId) {
+            showImages(parseInt(showImagesId));
+        }
+
+        if (tab || showImagesId) {
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    })();
+</script>
+{% endblock %}

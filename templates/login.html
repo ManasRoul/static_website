@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>&#128274; Dashboard Login</h1>
+                <p>Enter your credentials to access the admin panel</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="login-form" id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required autocomplete="username">
+                    <span class="error-msg" id="usernameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+                    <span class="error-msg" id="passwordError"></span>
+                </div>
+
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+
+            <div class="login-footer">
+                <a href="{{ url_for('home') }}">&larr; Back to Website</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const usernameError = document.getElementById('usernameError');
+        const passwordError = document.getElementById('passwordError');
+
+        function validateField(input, errorEl, fieldName) {
+            const value = input.value.trim();
+            if (!value) {
+                errorEl.textContent = `${fieldName} is required.`;
+                input.classList.add('input-error');
+                return false;
+            }
+            if (value.length < 3) {
+                errorEl.textContent = `${fieldName} must be at least 3 characters.`;
+                input.classList.add('input-error');
+                return false;
+            }
+            errorEl.textContent = '';
+            input.classList.remove('input-error');
+            return true;
+        }
+
+        usernameInput.addEventListener('blur', () => {
+            validateField(usernameInput, usernameError, 'Username');
+        });
+
+        passwordInput.addEventListener('blur', () => {
+            validateField(passwordInput, passwordError, 'Password');
+        });
+
+        usernameInput.addEventListener('input', () => {
+            if (usernameInput.classList.contains('input-error')) {
+                validateField(usernameInput, usernameError, 'Username');
+            }
+        });
+
+        passwordInput.addEventListener('input', () => {
+            if (passwordInput.classList.contains('input-error')) {
+                validateField(passwordInput, passwordError, 'Password');
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            const isUsernameValid = validateField(usernameInput, usernameError, 'Username');
+            const isPasswordValid = validateField(passwordInput, passwordError, 'Password');
+
+            if (!isUsernameValid || !isPasswordValid) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

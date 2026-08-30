@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{{ "Edit" if floor else "Add" }} Floor - Dashboard{% endblock %}
+
+{% block content %}
+<div class="dash-header">
+    <h1>{{ "Edit" if floor else "Add New" }} Floor</h1>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">&larr; Back to List</a>
+</div>
+
+<div class="dash-form-container">
+    <form method="POST" class="dash-form">
+        <div class="form-group">
+            <label for="name">Floor Name <span class="required">*</span></label>
+            <input type="text" id="name" name="name" value="{{ floor.name if floor else '' }}" placeholder="e.g. Fourth Floor" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="3" placeholder="Optional description">{{ floor.description if floor else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="order">Display Order</label>
+            <input type="number" id="order" name="order" value="{{ floor.order if floor else 0 }}" min="0">
+            <small>Lower numbers appear first on the homepage.</small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{ "Update" if floor else "Create" }} Floor</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

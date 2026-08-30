@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Hotel Sagar Bela, Puri - Beachside Stay Near Jagannath Temple{% endblock %}
+{% block meta_description %}Stay at Hotel Sagar Bela in Puri, just 200m from the beach. Comfortable AC & Non-AC rooms with free WiFi, sea view, kitchen facility. Book your seaside getaway near Jagannath Temple today!{% endblock %}
+
+{% block content %}
+<section class="slider">
+    <div class="slides">
+        {% set gradients = [
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+        ] %}
+        {% if slides %}
+            {% for slide in slides %}
+            <div class="slide {% if loop.first %}active{% endif %}" style="{% if slide.image_filename %}background: url('{{ url_for('static', filename='uploads/' + slide.image_filename) }}') center/cover no-repeat;{% else %}background: {{ gradients[loop.index0 % 5] }};{% endif %}">
+                <div class="slide-content">
+                    <h1>{{ slide.title }}</h1>
+                    {% if slide.subtitle %}<p>{{ slide.subtitle }}</p>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="slide active" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="slide-content">
+                    <h1>Welcome to Our Website</h1>
+                    <p>Add slides from the dashboard</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% if slides | length > 1 %}
+    <button class="slider-btn prev" onclick="changeSlide(-1)">&#10094;</button>
+    <button class="slider-btn next" onclick="changeSlide(1)">&#10095;</button>
+    <div class="slider-dots">
+        {% for slide in slides %}
+        <span class="dot {% if loop.first %}active{% endif %}" onclick="goToSlide({{ loop.index0 }})"></span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+
+<section class="home-content">
+    <h2>Explore Our Floors</h2>
+    <div class="floor-cards">
+        {% for floor in floors %}
+        <a href="{{ url_for('floor_detail', floor_id=floor.id) }}" class="floor-card">
+            <h3>{{ floor.name }}</h3>
+            <div class="floor-thumbnails">
+                {% if floor.images %}
+                    {% for image in floor.images[:4] %}
+                    <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="{{ image.original_name }}">
+                    {% endfor %}
+                    {% for i in range(4 - floor.images[:4] | length) %}
+                    <div class="thumb-placeholder"></div>
+                    {% endfor %}
+                {% else %}
+                    <div class="thumb-placeholder"></div>
+                    <div class="thumb-placeholder"></div>
+                    <div class="thumb-placeholder"></div>
+                    <div class="thumb-placeholder"></div>
+                {% endif %}
+            </div>
+            {% if floor.images | length > 0 %}
+            <p class="floor-image-count">{{ floor.images | length }} image(s)</p>
+            {% else %}
+            <p class="floor-image-count">No images yet</p>
+            {% endif %}
+        </a>
+        {% endfor %}
+
+        {% if not floors %}
+        <p class="no-floors">No floors available. Add floors from the <a href="{{ url_for('dashboard') }}">dashboard</a>.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% if posts %}
+<section class="home-content posts-section">
+    <h2>Latest Updates</h2>
+    <div class="posts-slider-container">
+        <button class="posts-slider-btn posts-prev" onclick="slidePost(-1)">&#10094;</button>
+        <div class="posts-slider" id="postsSlider">
+            {% for post in posts %}
+            <a href="{{ url_for('post_detail', post_id=post.id) }}" class="post-card">
+                {% if post.image_filename %}
+                <div class="post-image">
+                    <img src="{{ url_for('static', filename='uploads/' + post.image_filename) }}" alt="{{ post.title }}">
+                </div>
+                {% endif %}
+                <div class="post-body">
+                    <h3>{{ post.title }}</h3>
+                    {% if post.content %}
+                    <p>{{ post.content }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        <button class="posts-slider-btn posts-next" onclick="slidePost(1)">&#10095;</button>
+    </div>
+</section>
+{% endif %}
+
+{% if booking_info and (booking_info.phone or booking_info.cab_phone) %}
+<section class="booking-block">
+    <div class="booking-content">
+        <h2>{{ booking_info.heading }}</h2>
+        <p>{{ booking_info.subtext }}</p>
+        <div class="booking-buttons">
+            {% if booking_info.phone %}
+            <a href="tel:{{ booking_info.phone | replace('-', '') | replace(' ', '') }}" class="booking-call-btn">
+                <span class="booking-phone-icon">&#128222;</span>
+                <span class="booking-btn-text">
+                    <small>Booking</small>
+                    {{ booking_info.phone }}
+                </span>
+            </a>
+            {% endif %}
+            {% if booking_info.cab_phone %}
+            <a href="tel:{{ booking_info.cab_phone | replace('-', '') | replace(' ', '') }}" class="booking-call-btn cab-btn">
+                <span class="booking-phone-icon">&#128662;</span>
+                <span class="booking-btn-text">
+                    <small>Cab Service</small>
+                    {{ booking_info.cab_phone }}
+                </span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+
+    function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        currentSlide = (index + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+
+    function changeSlide(direction) {
+        showSlide(currentSlide + direction);
+    }
+
+    function goToSlide(index) {
+        showSlide(index);
+    }
+
+    // Auto-advance slides every 4 seconds
+    setInterval(() => {
+        changeSlide(1);
+    }, 4000);
+
+    // Posts slider
+    function slidePost(direction) {
+        var slider = document.getElementById('postsSlider');
+        if (!slider) return;
+        var card = slider.querySelector('.post-card');
+        if (!card) return;
+        var cardWidth = card.offsetWidth + 20; // card width + gap
+        slider.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+    }
+</script>
+{% endblock %}

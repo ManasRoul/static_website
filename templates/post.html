@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Hotel Sagar Bela, Puri{% endblock %}
+{% block meta_description %}{{ post.content[:160] if post.content else post.title }}{% endblock %}
+{% block og_image %}{% if post.image_filename %}<meta property="og:image" content="{{ url_for('static', filename='uploads/' + post.image_filename, _external=True) }}">{% endif %}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>{{ post.title }}</h1>
+</section>
+
+<section class="page-content">
+    <a href="{{ url_for('home') }}" class="back-link">&larr; Back to Home</a>
+
+    <div class="post-detail">
+        {% if post.image_filename %}
+        <div class="post-detail-image">
+            <img src="{{ url_for('static', filename='uploads/' + post.image_filename) }}" alt="{{ post.title }}">
+        </div>
+        {% endif %}
+
+        {% if post.content %}
+        <div class="post-detail-content">
+            <p>{{ post.content }}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

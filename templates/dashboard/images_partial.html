@@ -1,0 +1,41 @@
+<div class="right-images-header">
+    <h2>&#128247; Images: {{ floor.name }}</h2>
+    <button class="btn btn-sm btn-secondary" onclick="hideImages()">&#10005; Close</button>
+</div>
+
+<!-- Upload Section -->
+<div class="inline-upload-section">
+    <form action="{{ url_for('dashboard_upload_image', floor_id=floor.id) }}" method="POST" enctype="multipart/form-data" class="inline-upload-form">
+        <div class="upload-row">
+            <input type="file" name="images" multiple accept="image/*" required>
+            <button type="submit" class="btn btn-sm btn-primary">Upload</button>
+        </div>
+        <small>Accepted: png, jpg, jpeg, gif, svg, webp</small>
+    </form>
+</div>
+
+<!-- Current Images -->
+<div class="inline-images-grid">
+    {% if floor.images %}
+        {% for image in floor.images %}
+        <div class="inline-image-card">
+            <div class="inline-image-preview">
+                <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="{{ image.caption or image.original_name }}">
+            </div>
+            <div class="inline-image-info">
+                <form action="{{ url_for('dashboard_update_image_caption', image_id=image.id) }}" method="POST" class="caption-form">
+                    <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="Enter image name..." class="caption-input">
+                    <button type="submit" class="btn btn-xs btn-info" title="Save caption">&#10003;</button>
+                </form>
+                <form action="{{ url_for('dashboard_delete_image', image_id=image.id) }}" method="POST" onsubmit="return confirm('Delete this image?');">
+                    <button type="submit" class="btn btn-xs btn-danger" title="Delete">&#128465;</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="inline-empty">
+            <p>No images yet. Upload some above.</p>
+        </div>
+    {% endif %}
+</div>
